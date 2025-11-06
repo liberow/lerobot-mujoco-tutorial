@@ -14,6 +14,14 @@
 # ==== 可选：下载数据集（在终端中执行） ====
 # git clone https://huggingface.co/datasets/Jeongeun/omy_pnp_language
 
+## 
+# pip install huggingface_hub
+# huggingface-cli login 
+# huggingface-cli download Jeongeun/omy_pnp_language \
+#     --repo-type dataset \
+#     --local-dir ./demo_data_language
+
+
 # ==== 可选：训练（在终端中执行） ====
 # python train_model.py --config_path smolvla_omy.yaml
 

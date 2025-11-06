@@ -21,7 +21,7 @@ import torchvision
 # ==== 加载策略配置 ====
 device = 'cuda'
 
-dataset_metadata = LeRobotDatasetMetadata("omy_pnp", root='./demo_data')
+dataset_metadata = LeRobotDatasetMetadata("omy_pnp", root='./datasets')
 features = dataset_to_policy_features(dataset_metadata.features)
 output_features = {key: ft for key, ft in features.items() if ft.type is FeatureType.ACTION}
 input_features = {key: ft for key, ft in features.items() if key not in output_features}

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-通过键盘采集演示数据
+通过键盘采集数据
 
-为给定环境采集演示数据。
+为给定环境采集数据。
 任务是抓取杯子并放置在盘子上。
 环境识别成功的条件：杯子在盘子上、夹爪打开、末端执行器位于杯子上方。
 
@@ -39,9 +39,9 @@ from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
 SEED = 0 
 # SEED = None  # <- 取消注释此行以随机化物体位置
 
-REPO_NAME = 'liberow'
+REPO_NAME = 'omy_grasp_mug_01'
 NUM_DEMO = 5  # 要采集的演示数量
-ROOT = "./demo_data"  # 保存演示数据的根目录
+ROOT = "./datasets"  # 保存演示数据的根目录
 
 TASK_NAME = 'Put mug cup on the plate' 
 xml_path = './asset/example_scene_y.xml'
@@ -92,7 +92,7 @@ def main():
         dataset = LeRobotDataset.create(
             repo_id=REPO_NAME,
             root=ROOT, 
-            robot_type="liber",
+            robot_type="omy",
             fps=20,  # 每秒 20 帧
             features={
                 "observation.image": {
@@ -219,14 +219,17 @@ def main():
                 agent_image, wrist_image = PnPEnv.grab_image()
                 
                 # 调整图像大小为 256x256
+                ## 将图像转换为PIL图像
                 agent_image = Image.fromarray(agent_image)
                 wrist_image = Image.fromarray(wrist_image)
+                ## 将图像调整为256x256
                 agent_image = agent_image.resize((256, 256))
                 wrist_image = wrist_image.resize((256, 256))
+                ## 将图像转换为numpy数组
                 agent_image = np.array(agent_image)
                 wrist_image = np.array(wrist_image)
                 
-                joint_q = PnPEnv.step(action)
+                joint_q = PnPEnv.step(action) # 将键盘动作应用到环境，得到关节空间反馈
                 
                 if record_flag:
                     # 将帧添加到数据集
@@ -238,7 +241,7 @@ def main():
                         "obj_init": PnPEnv.obj_init_pose,
                     }, task=TASK_NAME)
                 
-                PnPEnv.render(teleop=True)
+                PnPEnv.render(teleop=True) # 渲染环境
     
     except KeyboardInterrupt:
         print("\n\n⚠ 用户中断 (Ctrl+C)")
@@ -259,17 +262,6 @@ def main():
         #     print("✓ 临时图像文件夹已删除")
         
         print(f"\n数据集已保存到: {ROOT}")
-        print("数据集结构:")
-        print("  ./demo_data/")
-        print("    ├── data/")
-        print("    │   └── chunk-000/")
-        print("    │       ├── episode_000000.parquet")
-        print("    │       └── ...")
-        print("    └── meta/")
-        print("        ├── episodes.jsonl")
-        print("        ├── info.json")
-        print("        ├── stats.json")
-        print("        └── tasks.jsonl")
         print("\n" + "=" * 64)
         print("数据采集完成！")
         print("=" * 64)

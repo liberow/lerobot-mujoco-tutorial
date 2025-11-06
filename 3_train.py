@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
-训练 Action-Chunking-Transformer (ACT) 模型
-
-在自定义数据集上训练 ACT 模型。本示例将 chunk_size 设为 10。
+在自定义数据集上训练 Action-Chunking-Transformer (ACT) 模型。
 """
 
 # ==== 导入依赖 ====
@@ -14,13 +12,12 @@ from lerobot.common.policies.act.configuration_act import ACTConfig
 from lerobot.common.policies.act.modeling_act import ACTPolicy
 from lerobot.configs.types import FeatureType
 from lerobot.common.datasets.factory import resolve_delta_timestamps
-import torchvision
 
 # ==== 设备与训练配置 ====
 device = torch.device("cuda")
 
 # 仅进行离线训练步数（可按需调整，建议 ≥ 5000 步才有较好效果）
-training_steps = 3000
+training_steps = 8000
 log_freq = 100
 
 # ==== 策略配置与初始化 ====
@@ -29,11 +26,11 @@ log_freq = 100
 #  - 数据集统计信息（用于归一化/反归一化）
 chunk_size = 10
 
-dataset_metadata = LeRobotDatasetMetadata("omy_pnp", root='./demo_data')
+dataset_metadata = LeRobotDatasetMetadata("omy_grasp_mug", root='./datasets')
 features = dataset_to_policy_features(dataset_metadata.features)
 output_features = {key: ft for key, ft in features.items() if ft.type is FeatureType.ACTION}
 input_features = {key: ft for key, ft in features.items() if key not in output_features}
-# 去掉腕部图像（与 notebook 一致）
+# 去掉腕部图像
 input_features.pop("observation.wrist_image")
 
 # 使用 ACTConfig，默认超参；仅传入输入/输出特征与 chunk 配置

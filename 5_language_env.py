@@ -1,34 +1,34 @@
 #!/usr/bin/env python3
 """
-语言环境：键盘采集演示数据
+语言环境：使用键盘采集数据
 
 在包含语言指令的场景中采集演示数据。
 右上/右下叠加图像来自数据集；侧视图显示在左上。
 """
 
-# ==== 导入依赖 ====
-import sys
-import random
-import numpy as np
 import os
+import numpy as np
+
 from PIL import Image
-from mujoco_env.y_env2 import SimpleEnv2
 from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
+
+from mujoco_env.y_env2 import SimpleEnv2
+
 
 # ==== 配置 ====
 # 若想随机化物体位置，设置为 None；固定种子则每次相同
 SEED = 0
 # SEED = None  # 取消注释以随机化物体位置
 
-REPO_NAME = 'omy_pnp_language'
+REPO_NAME = 'omy_grasp_mug'
 NUM_DEMO = 20  # 采集的演示数量
-ROOT = "./demo_data_language"  # 数据集保存根目录
+ROOT = "./datasets"  # 数据集保存根目录
 
 # ==== 创建环境 ====
 xml_path = './asset/example_scene_y2.xml'
 PnPEnv = SimpleEnv2(xml_path, seed=SEED, state_type='joint_angle')
 
-# ==== 数据集特征说明（注释保留以便查阅） ====
+# ==== 数据集特征====
 # fps = 20,
 # features={
 #     "observation.image": {"dtype": "image", "shape": (256, 256, 3)},
@@ -37,7 +37,6 @@ PnPEnv = SimpleEnv2(xml_path, seed=SEED, state_type='joint_angle')
 #     "action": {"dtype": "float32", "shape": (7,)},
 #     "obj_init": {"dtype": "float32", "shape": (9,)},
 # }
-# 生成的数据目录结构参见 notebook 注释。
 
 # ==== 创建/加载数据集 ====
 create_new = True
@@ -90,7 +89,7 @@ else:
     print("Load from previous dataset")
     dataset = LeRobotDataset(REPO_NAME, root=ROOT)
 
-# ==== 键盘控制说明（中文化） ====
+# ==== 键盘控制说明 ====
 # XY 平面: W 后退 / S 前进 / A 左移 / D 右移
 # Z 轴:    R 上升 / F 下降
 # 旋转:    Q 左倾 / E 右倾 / 方向键控制俯仰与偏航
@@ -111,7 +110,7 @@ while PnPEnv.env.is_viewer_alive() and episode_id < NUM_DEMO:
             dataset.save_episode()
             PnPEnv.reset()
             episode_id += 1
-        # 键盘遥操作用
+        # 用键盘遥操作
         action, reset = PnPEnv.teleop_robot()
         if not record_flag and sum(action) != 0:
             record_flag = True
@@ -128,7 +127,7 @@ while PnPEnv.env.is_viewer_alive() and episode_id < NUM_DEMO:
         wrist_image = Image.fromarray(wrist_image).resize((256, 256))
         agent_image = np.array(agent_image)
         wrist_image = np.array(wrist_image)
-        # 推进一步，并从关节状态构建 action（保持与 notebook 一致）
+        # 推进一步，并从关节状态构建 action
         joint_q = PnPEnv.step(action)
         action = PnPEnv.q[:7].astype(np.float32)
         if record_flag:

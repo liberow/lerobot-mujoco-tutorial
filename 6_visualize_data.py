@@ -6,21 +6,20 @@
 主窗口回放动作，右上/右下叠加来自数据集的图像。
 """
 
-# ==== 可选：从 Hugging Face 下载数据集 ====
-# 提示：以下命令为 notebook 魔法命令，请在终端手动执行：
+# ==== 从 Hugging Face 下载数据集 ====
 # git clone https://huggingface.co/datasets/Jeongeun/omy_pnp_language
 
-# ==== 导入依赖 ====
-from lerobot.common.datasets.lerobot_dataset import LeRobotDataset, LeRobotDatasetMetadata
-import numpy as np
-from lerobot.common.datasets.utils import write_json, serialize_dict
 import torch
+import numpy as np
+from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
+
+from mujoco_env.y_env2 import SimpleEnv2
 
 # ROOT: 数据集根目录（本地采集则 './demo_data_language'；若用 HF 下载，则指向其目录）
-ROOT = "./demo_data_language"
+ROOT = "./datasets"
 # ROOT = './omy_pnp_language'
 
-dataset = LeRobotDataset('omy_pnp_language', root=ROOT)
+dataset = LeRobotDataset('omy_grasp_mug', root=ROOT)
 
 # ==== 单回合采样器 ====
 class EpisodeSampler(torch.utils.data.Sampler):
@@ -50,7 +49,6 @@ dataloader = torch.utils.data.DataLoader(
 )
 
 # ==== 在仿真中可视化 ====
-from mujoco_env.y_env2 import SimpleEnv2
 xml_path = './asset/example_scene_y2.xml'
 PnPEnv = SimpleEnv2(xml_path, action_type='joint_angle')
 
@@ -93,5 +91,5 @@ while PnPEnv.env.is_viewer_alive():
 # 关闭查看器
 PnPEnv.env.close_viewer()
 
-# ==== 可选：推送数据集到 Hub ====
+# ==== 推送数据集到 Hub ====
 # dataset.push_to_hub(upload_large_folder=True)

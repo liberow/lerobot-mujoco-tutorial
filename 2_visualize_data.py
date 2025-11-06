@@ -18,8 +18,8 @@ from mujoco_env.y_env import SimpleEnv
 # ============================================================================
 
 # 数据集配置
-REPO_NAME = 'liberow'  # 与采集时使用的名称一致
-ROOT = './demo_data'  # 数据集路径
+REPO_NAME = 'omy_grasp_mug_01'  # 与采集时使用的名称一致
+ROOT = './datasets'  # 数据集路径
 # 如果要使用提供的示例数据，使用: ROOT = './demo_data_example'
 
 # 可视化配置
