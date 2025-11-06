@@ -14,12 +14,16 @@
 # ==== 可选：下载数据集（在终端中执行） ====
 # git clone https://huggingface.co/datasets/Jeongeun/omy_pnp_language
 
-## 
+## 下载数据集
 # pip install huggingface_hub
 # huggingface-cli login 
 # huggingface-cli download Jeongeun/omy_pnp_language \
 #     --repo-type dataset \
 #     --local-dir ./demo_data_language
+
+## 下载模型
+# cd ckpt
+# huggingface-cli download Liberow/omy_pickplace --repo-type model --local-dir . # 下载到当前目录
 
 
 # ==== 可选：训练（在终端中执行） ====
@@ -39,7 +43,7 @@ from PIL import Image
 import torchvision
 
 # 设备
-device = 'cuda'
+device = "cuda"
 
 # 加载数据集元信息（优先从本地采集路径，否则从 HF 下载目录）
 try:
@@ -56,7 +60,7 @@ cfg = SmolVLAConfig(input_features=input_features, output_features=output_featur
 _ = resolve_delta_timestamps(cfg, dataset_metadata)
 
 # 从本地检查点加载策略（或从 Hub 加载，见注释）
-policy = SmolVLAPolicy.from_pretrained('./ckpt/smolvla_omy/checkpoints/last/pretrained_model', dataset_stats=dataset_metadata.stats)
+policy = SmolVLAPolicy.from_pretrained('./ckpt/smolvla_omy/checkpoints/015000/pretrained_model', dataset_stats=dataset_metadata.stats)
 # policy = SmolVLAPolicy.from_pretrained("Jeongeun/omy_pnp_pi0", config=cfg, dataset_stats=dataset_metadata.stats)
 policy.to(device)
 
