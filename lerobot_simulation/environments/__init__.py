@@ -1,1 +1,0 @@
-from .pickplace_env import PickPlaceEnv
